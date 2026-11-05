@@ -1,0 +1,223 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>Truco Argentino</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--felt:#176443;--felt2:#092e20;--ink:#f7f1df;--muted:#c4cbb9;--gold:#edc76a;--panel:#103d2b;--line:#ffffff20;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;font-family:system-ui,"Segoe UI",sans-serif;color:var(--ink);background:radial-gradient(ellipse at 50% 18%,#287553 0,var(--felt) 34%,var(--felt2) 100%);min-height:100dvh}
+button,input{font:inherit}
+#app{width:min(100%,900px);margin:0 auto;padding:clamp(12px,3vw,26px);display:flex;flex-direction:column;gap:clamp(12px,2.4vh,22px);min-height:100dvh}
+.game-shell{display:flex;flex-direction:column;gap:clamp(12px,2.4vh,22px);min-height:calc(100dvh - clamp(24px,6vw,52px))}
+.game-head{display:flex;align-items:center;gap:12px;padding:4px 2px}
+.brand-mark{width:42px;height:42px;display:grid;place-items:center;border:1px solid #ffffff32;border-radius:14px;background:#ffffff0c;color:var(--gold);font:28px Georgia,serif}
+.game-title{display:flex;flex:1;flex-direction:column;gap:1px}
+.eyebrow{color:var(--muted);font-size:10px;font-weight:800;letter-spacing:2px}
+.game-title strong{font:700 19px Georgia,serif;letter-spacing:.3px}
+.icon-button{width:40px;height:40px;border:1px solid var(--line);border-radius:13px;background:#ffffff0c;color:var(--ink);font-size:20px;cursor:pointer;transition:background .2s,transform .2s}
+.icon-button:hover{background:#ffffff1a;transform:translateY(-2px)}
+.sc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.pl{min-width:0;padding:12px 14px 10px;background:linear-gradient(145deg,#ffffff12,#ffffff06);border:1px solid var(--line);border-radius:16px;box-shadow:0 8px 22px #001c1230}
+.score-top,.score-bottom{display:flex;align-items:center}
+.score-top{justify-content:space-between;gap:6px}
+.player-name{font-size:13px;font-weight:750}
+.dealer{padding:3px 7px;border-radius:99px;background:#edc76a20;color:var(--gold);font-size:9px;font-weight:850;letter-spacing:1px}
+.score-bottom{margin:2px 0 7px;gap:5px}
+.pl strong{font:700 27px Georgia,serif;color:var(--gold)}
+.score-target{color:var(--muted);font-size:12px}
+.bar{height:4px;background:#ffffff20;border-radius:5px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#d9a944,var(--gold));transition:width .4s}
+.opponent-area,.hand-area,.table-area{display:flex;flex-direction:column;gap:8px}
+.area-label{display:flex;justify-content:space-between;align-items:center;padding:0 3px;color:var(--muted);font-size:11px;font-weight:750;letter-spacing:.5px}
+.area-hint{font-weight:500;opacity:.8}
+.table-label{display:flex;justify-content:space-between;align-items:center;padding:0 4px;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:1.4px}
+.table-label span{font-size:10px;font-weight:600;letter-spacing:.3px}
+.row{display:flex;justify-content:center;gap:10px;position:relative}
+.opponent-cards{min-height:clamp(64px,18vw,82px);align-items:flex-start}
+.card{width:clamp(62px,20vw,104px);aspect-ratio:5/8;background:#fbf6e6;color:#222;border-radius:10px;position:relative;overflow:hidden;box-shadow:0 5px 12px #00180f70;border:1px solid #e8dfc7;display:flex;align-items:center;justify-content:center;box-sizing:border-box}
+.card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.card.back{background:repeating-linear-gradient(45deg,#762b33 0 5px,#983e43 5px 10px);border:3px solid #f1e7ce;box-shadow:0 5px 12px #00180f80}
+.sm{width:clamp(40px,12vw,60px)}
+.col{display:flex;flex-direction:column;gap:7px;align-items:center}
+.mid{min-height:clamp(245px,44vh,390px);align-items:center;gap:clamp(12px,5vw,36px);padding:16px 10px;overflow:hidden;border:1px solid #ffffff26;border-radius:26px;background:radial-gradient(ellipse at 50% 42%,#276747,#155237 58%,#10412d);box-shadow:inset 0 0 0 6px #ffffff08,inset 0 0 40px #00251655,0 16px 36px #00190f38;position:relative}
+.mid:before{content:"";position:absolute;inset:13px;border:1px solid #ffffff12;border-radius:20px;pointer-events:none}
+.ph{width:clamp(62px,20vw,104px);aspect-ratio:5/8;border:1px dashed #ffffff47;border-radius:10px;background:#ffffff06}
+.win{outline:3px solid var(--gold);outline-offset:2px;transform:translateY(-4px);box-shadow:0 0 22px #edc76a55}
+.play-card{padding:0;border:0;background:transparent;border-radius:11px;cursor:pointer;touch-action:manipulation}
+.play-card:disabled{cursor:default}
+.can .card{transition:transform .18s,box-shadow .18s}
+.can:hover .card,.can:focus-visible .card{transform:translateY(-10px);box-shadow:0 12px 20px #00180f85}
+.can:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+.bub{position:absolute;left:50%;transform:translateX(-50%);top:-12px;z-index:3;background:#fff8e9;color:#29241b;padding:8px 15px;border:1px solid #e8d9b8;border-radius:99px;font-size:13px;font-weight:850;white-space:nowrap;box-shadow:0 5px 18px #0005;animation:pop .25s}
+@keyframes drop{from{transform:translateY(-24px) scale(1.06);opacity:0}}
+@keyframes pop{from{transform:translateX(-50%) scale(.5);opacity:0}}
+.col .card{animation:drop .3s}
+.info{display:flex;align-items:center;justify-content:center;gap:8px;min-height:40px;padding:9px 14px;border:1px solid var(--line);border-radius:13px;background:#061e155c;text-align:center;font-size:13px;color:var(--muted)}
+.status-dot{width:7px;height:7px;flex:none;border-radius:50%;background:#a7d89a;box-shadow:0 0 9px #a7d89a88}
+.info b{color:var(--ink);font-weight:750}
+.stake{margin-left:auto;color:var(--gold);font-size:11px;font-weight:800;white-space:nowrap}
+.log{min-height:62px;padding:9px 13px;border:1px solid var(--line);border-radius:14px;background:#ffffff08;font-size:12px;line-height:1.45;color:#d9dfd0}
+.log-line{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.log-line b{color:var(--gold);font-weight:750}
+.acts{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;min-height:46px}
+.b{min-height:44px;padding:10px 17px;border:1px solid #f8d987;border-radius:14px;background:linear-gradient(180deg,#f3d37e,#d5a846);color:#35250a;font-weight:800;font-size:14px;cursor:pointer;box-shadow:0 4px 0 #805b20,0 8px 15px #00190f30;transition:transform .15s,filter .15s,box-shadow .15s}
+.b:hover{filter:brightness(1.08);transform:translateY(-2px);box-shadow:0 6px 0 #805b20,0 10px 18px #00190f38}
+.b:active{transform:translateY(2px);box-shadow:0 1px 0 #805b20}
+.b:focus-visible,.join input:focus-visible,.icon-button:focus-visible{outline:3px solid #fff3b1;outline-offset:3px}
+.b.n,.b.quiet{border-color:#ffffff32;background:linear-gradient(180deg,#345f4a,#254a39);color:var(--ink);box-shadow:0 4px 0 #102e22,0 8px 15px #00190f30}
+.hand-area{margin-top:auto}
+.hand-row{min-height:clamp(105px,25vw,140px);align-items:flex-end;padding:6px 0 12px}
+.hand-row .card{width:clamp(76px,25vw,128px)}
+.menu{width:min(100%,470px);margin:auto;text-align:center;display:flex;flex-direction:column;gap:15px;align-items:center;padding:clamp(22px,6vw,38px);border:1px solid #ffffff20;border-radius:26px;background:linear-gradient(145deg,#ffffff0d,#ffffff05);box-shadow:0 24px 70px #001a103b}
+.menu-mark{display:grid;place-items:center;width:54px;height:54px;border:1px solid #edc76a55;border-radius:18px;background:#edc76a12;color:var(--gold);font:30px Georgia,serif}
+.menu h1{font:900 clamp(60px,16vw,94px)/.95 Georgia,serif;margin:0;color:var(--gold);text-shadow:0 3px 0 #76521a,0 10px 25px #0007;letter-spacing:4px}
+.menu-subtitle{margin-top:-5px;color:var(--muted);font-size:14px}
+.menu .b{width:min(100%,310px)}
+.join{display:flex;gap:9px;width:min(100%,310px)}
+.join input{min-width:0;width:120px;flex:1;text-align:center;font:800 18px system-ui;letter-spacing:3px;border-radius:14px;border:1px solid #ffffff36;background:#071e16aa;color:var(--ink);text-transform:uppercase}
+.join input::placeholder{color:#c4cbb98c;font-size:12px;letter-spacing:1px}
+.join .b{width:auto}
+.menu .info{display:block;width:100%;min-height:0}
+details{width:100%;font-size:13px;text-align:left;border:1px solid var(--line);border-radius:15px;background:#061e155c;padding:12px 15px}
+details summary{cursor:pointer;font-weight:750}
+details p{color:#d9dfd0;line-height:1.55}
+details a{color:var(--gold)}
+@media(max-width:420px){#app{padding:12px}.game-shell{gap:12px}.pl{padding:10px 11px}.mid{min-height:clamp(220px,38vh,300px);border-radius:22px}.mid:before{inset:10px}.row{gap:7px}.hand-row .card{width:clamp(74px,24vw,100px)}.log{min-height:58px}.b{padding-inline:13px;font-size:13px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style></head><body><div id="app"></div>
+<script>
+const $=id=>document.getElementById(id);
+const EN={e:'¡Envido!',r:'¡Real Envido!',f:'¡Falta Envido!'};
+const AM={q:{t:'quiero'},n:{t:'no'},tr:{t:'truco'},mz:{t:'mazo'},ee:{t:'env',k:'e'},er:{t:'env',k:'r'},ef:{t:'env',k:'f'}};
+let S=null,mode='',V=0,room=null,gp=null,bub=null,lk=0,info='',iv=0;
+const R=c=>c.s==0&&c.n==1?14:c.s==1&&c.n==1?13:c.s==0&&c.n==7?12:c.s==2&&c.n==7?11:c.n==3?10:c.n==2?9:c.n==1?8:c.n==12?7:c.n==11?6:c.n==10?5:c.n==7?4:c.n==6?3:c.n==5?2:1;
+const EV=h=>{let b=0;for(let s=0;s<4;s++){const v=h.filter(c=>c.s==s).map(c=>c.n>9?0:c.n).sort((a,b)=>b-a);if(v.length>1)b=Math.max(b,20+v[0]+v[1]);else if(v.length)b=Math.max(b,v[0])}return b};
+const canR=(st,k)=>k=='e'?st.filter(x=>x=='e').length<2&&!st.includes('r')&&!st.includes('f'):k=='r'?!st.includes('r')&&!st.includes('f'):!st.includes('f');
+const stv=st=>st.includes('f')?Math.max(1,30-Math.max(...S.pts)):st.reduce((a,k)=>a+(k=='e'?2:3),0);
+
+/* ---------- motor del juego (corre en el anfitrión o contra la compu) ---------- */
+function startGame(){S={pts:[0,0],mano:1,log:[],over:null,say:null};round();after()}
+function round(){
+ const d=[];for(let s=0;s<4;s++)for(const n of[1,2,3,4,5,6,7,10,11,12])d.push({s,n});
+ for(let i=39;i>0;i--){const j=Math.random()*(i+1)|0;[d[i],d[j]]=[d[j],d[i]]}
+ const h=[d.slice(0,3),d.slice(3,6)];S.mano=1-S.mano;
+ Object.assign(S,{orig:h.map(x=>x.slice()),hands:h,tricks:[],cur:[null,null],lvl:0,owner:-1,pend:null,held:null,envDone:false,turn:S.mano,end:null,sc:0});
+ say(S.mano,'Soy mano')}
+function say(s,t){S.say={s,t,k:Date.now()+Math.random()};S.log.push([s,t]);if(S.log.length>30)S.log.shift()}
+function add(w,p){S.pts[w]+=p;if(S.pts[w]>=30){S.over=w;S.end={w,p};S.pend=null}}
+function endR(w,p){S.pend=null;S.held=null;S.end={w,p};add(w,p)}
+function envR(q){
+ const P=S.pend,st=P.st;S.envDone=true;S.pend=S.held;S.held=null;
+ if(!q){add(P.from,st.length==1?1:stv(st.slice(0,-1)));return}
+ const e=[EV(S.orig[0]),EV(S.orig[1])],m=S.mano,x=1-m,w=e[m]>=e[x]?m:x;
+ say(m,''+e[m]);say(x,w==x?e[x]+' son mejores':'Son buenas');add(w,stv(st))}
+function act(s,a){
+ if(S.over!=null||S.end)return;
+ const P=S.pend,o=1-s,t=a.t;
+ if(P){
+  if(P.who!=s)return;
+  if(t=='quiero'){if(P.k=='truco'){S.lvl=P.lvl;S.owner=s;S.pend=null;say(s,'¡Quiero!')}else{say(s,'¡Quiero!');envR(true)}return}
+  if(t=='no'){say(s,'No quiero');if(P.k=='truco')endR(P.from,[1,2,3,4][P.lvl-1]);else envR(false);return}
+  if(t=='truco'&&P.k=='truco'&&P.lvl<3){S.lvl=P.lvl;S.owner=s;S.pend={k:'truco',from:s,who:o,lvl:P.lvl+1};say(s,['¡Quiero retruco!','¡Quiero vale cuatro!'][P.lvl-1]);return}
+  if(t=='env'&&P.k=='truco'&&!S.tricks.length&&!S.envDone){S.held=P;S.pend={k:'env',from:s,who:o,st:[a.k]};say(s,EN[a.k]);return}
+  if(t=='env'&&P.k=='env'&&canR(P.st,a.k)){P.st.push(a.k);P.from=s;P.who=o;say(s,EN[a.k])}
+  return}
+ if(S.turn!=s)return;
+ if(t=='play'){
+  const c=S.hands[s][a.i];if(!c)return;S.hands[s].splice(a.i,1);S.cur[s]=c;
+  if(!S.cur[o]){S.turn=o;return}
+  const r0=R(S.cur[0]),r1=R(S.cur[1]),w=r0>r1?0:r1>r0?1:-1;
+  S.tricks.push({c:S.cur,w});S.cur=[null,null];
+  const rs=S.tricks.map(x=>x.w),[p,q,z]=rs;let W=null;
+  if(rs.length>=2){if(p==q&&p!=-1)W=p;else if(p!=-1&&q==-1)W=p;else if(p==-1&&q!=-1)W=q;else if(rs.length==3)W=z!=-1?z:p!=-1?p:S.mano}
+  if(W!=null)endR(W,[1,2,3,4][S.lvl]);else S.turn=w==-1?S.mano:w;return}
+ if(t=='truco'&&S.lvl<3&&(S.lvl==0||S.owner==s)){S.pend={k:'truco',from:s,who:o,lvl:S.lvl+1};say(s,['¡Truco!','¡Retruco!','¡Vale cuatro!'][S.lvl]);return}
+ if(t=='env'&&!S.envDone&&!S.tricks.length&&S.lvl==0){S.pend={k:'env',from:s,who:o,st:[a.k]};say(s,EN[a.k]);return}
+ if(t=='mazo'){say(s,'Me voy al mazo');endR(o,[1,2,3,4][S.lvl])}}
+function H(s,a){act(s,a);after()}
+function after(){
+ render();push();
+ if(S.end&&S.over==null&&!S.sc){S.sc=1;setTimeout(()=>{round();after()},2800)}
+ cpu()}
+function push(){if(mode!='host'||!room)return;room.emit('st',{...S,hands:[S.hands[0].map(()=>0),S.hands[1]],orig:null,log:S.log.slice(-8)}).catch(()=>{})}
+
+/* ---------- compu ---------- */
+function cpu(){
+ if(mode!='cpu'||S.over!=null||S.end)return;
+ setTimeout(()=>{const P=S.pend;if(S.over!=null||S.end||(P?P.who!=1:S.turn!=1))return;H(1,decide())},900+Math.random()*800)}
+function decide(){
+ const h=S.hands[1],P=S.pend,op=S.cur[0],r=Math.random(),rk=h.map(R);
+ let str=rk.reduce((a,b)=>a+b,0)/h.length+S.tricks.filter(t=>t.w==1).length*2-S.tricks.filter(t=>t.w==0).length*1.5;
+ if(P&&P.k=='env'){const e=EV(S.orig[1]);
+  if(e>=32&&r<.5&&canR(P.st,'r'))return{t:'env',k:'r'};
+  return e>=27||(e>=24&&r<.35)?{t:'quiero'}:{t:'no'}}
+ if(P){
+  if(str>=9.5&&P.lvl<3&&r<.4)return{t:'truco'};
+  const need=[0,6.5,8,9.5][P.lvl];return str>=need||r<.12?{t:'quiero'}:{t:'no'}}
+ if(!S.envDone&&!S.tricks.length&&S.lvl==0){const e=EV(S.orig[1]);
+  if(e>=29&&r<.7)return{t:'env',k:e>=32?'r':'e'};if(e>=26&&r<.3)return{t:'env',k:'e'};if(e<=22&&r<.07)return{t:'env',k:'e'}}
+ if(S.lvl<3&&(S.lvl==0||S.owner==1)&&((str>=9&&r<.35)||(str>=7.5&&r<.1)||r<.03))return{t:'truco'};
+ const ord=rk.map((_,i)=>i).sort((a,b)=>rk[a]-rk[b]);let i;
+ if(op){const w=ord.filter(k=>rk[k]>R(op));i=w.length?w[0]:ord[0]}
+ else i=!S.tricks.length&&r<.5?ord[ord.length>>1]:ord[ord.length-1];
+ return{t:'play',i}}
+
+/* ---------- interfaz ---------- */
+const PALO=['espadas','bastos','oros','copas'],ASSET_PALO=['swords','clubs','coins','cups'];
+const cardH=(c,x='')=>`<div class="card ${x}"><img src="assets/cards/${ASSET_PALO[c.s]}-${String(c.n).padStart(2,'0')}.webp" alt="${c.n} de ${PALO[c.s]}" draggable="false"></div>`;
+function btns(){
+ const P=S.pend,b=[],me=V;
+ if(S.over!=null)return mode=='guest'?[['Menú','M','n']]:[['Revancha','RV'],['Menú','M','n']];
+ const envB=()=>{if(!S.tricks.length&&!S.envDone)b.push(['Envido','ee'],['Real Envido','er'],['Falta Envido','ef'])};
+ if(P&&P.who==me){
+  b.push(['¡Quiero!','q'],['No quiero','n','n']);
+  if(P.k=='truco'){if(P.lvl<3)b.push([['Quiero retruco','Quiero vale cuatro'][P.lvl-1],'tr']);envB()}
+  else for(const k of['e','r','f'])if(canR(P.st,k))b.push([{e:'Envido',r:'Real Envido',f:'Falta Envido'}[k],'e'+k])}
+ else if(!P&&!S.end&&S.turn==me){
+  if(S.lvl<3&&(S.lvl==0||S.owner==me))b.push([['Truco','Retruco','Vale cuatro'][S.lvl],'tr']);
+  if(S.lvl==0)envB();b.push(['Al mazo','mz','n'])}
+ return b}
+function render(){
+ if(!S)return menu();
+ if(S.say&&S.say.k!=lk){lk=S.say.k;bub=S.say;setTimeout(()=>{bub=null;render()},2200)}
+ const me=V,o=1-V,P=S.pend,over=S.over!=null,mine=S.turn==me&&!P&&!S.end&&!over,nm=s=>s==me?'Vos':'Rival';
+ const bb=s=>bub&&bub.s==s?`<div class="bub">${bub.t}</div>`:'';
+ const slot=i=>{const t=S.tricks[i],c=t?t.c:i==S.tricks.length?S.cur:[null,null];
+  return`<div class="col">${[o,me].map(s=>c[s]?cardH(c[s],t&&t.w==s?'win':''):'<div class="ph"></div>').join('')}</div>`};
+ const sc=s=>`<div class="pl"><div class="score-top"><span class="player-name">${nm(s)}</span>${S.mano==s?'<span class="dealer">MANO</span>':''}</div><div class="score-bottom"><strong>${S.pts[s]}</strong><span class="score-target">/ 30 puntos</span></div><div class="bar"><i style="width:${S.pts[s]/.3}%"></i></div></div>`;
+ let st=over?(S.over==me?'🏆 ¡Ganaste la partida!':'Perdiste la partida'):S.end?`${nm(S.end.w)} ${S.end.w==me?'ganaste':'ganó'} ${S.end.p} punto${S.end.p>1?'s':''}`:P&&P.who==me?'Te cantaron, respondé':P?'Esperando respuesta…':mine?'Tu turno':'Juega el rival…';
+ $('app').innerHTML=`<main class="game-shell">
+ <header class="game-head"><span class="brand-mark" aria-hidden="true">♠</span><div class="game-title"><span class="eyebrow">TRUCO ARGENTINO</span><strong>La mesa está servida</strong></div><button class="icon-button" type="button" onclick="leave()" aria-label="Volver al menú" title="Volver al menú">⌂</button></header>
+ <section class="sc" aria-label="Puntaje">${sc(me)}${sc(o)}</section>
+ <section class="opponent-area" aria-label="Cartas del rival"><div class="area-label"><span>${nm(o).toUpperCase()}</span><span class="area-hint">${S.hands[o].length} cartas</span></div><div class="row opponent-cards">${S.hands[o].map(()=>'<div class="card back sm" aria-hidden="true"></div>').join('')}${bb(o)}</div></section>
+ <section class="table-area" aria-label="Mesa de juego"><div class="table-label"><span>LA MESA</span><span>Baza ${Math.min(S.tricks.length+1,3)} de 3</span></div><div class="row mid">${[0,1,2].map(slot).join('')}</div></section>
+ <div class="info" role="status"><span class="status-dot" aria-hidden="true"></span><b>${st}</b><span class="stake">EN JUEGO · ${[1,2,3,4][S.lvl]} PTO${S.lvl?'S':''}</span></div>
+ <div class="log" aria-label="Historial de la partida">${S.log.slice(-4).map(l=>`<div class="log-line"><b>${nm(l[0])}:</b> ${l[1]}</div>`).join('')}</div>
+ <div class="acts">${btns().map(x=>`<button class="b ${x[2]||''}" type="button" onclick="ac('${x[1]}')">${x[0]}</button>`).join('')}</div>
+ <section class="hand-area"><div class="area-label"><span>TUS CARTAS</span><span class="area-hint">${mine?'Elegí una para jugar':'Esperá tu turno'}</span></div><div class="row hand-row">${S.hands[me].map((c,i)=>`<button class="play-card ${mine?'can':''}" type="button" aria-label="Jugar ${c.n} de ${PALO[c.s]}" ${mine?'':'disabled'} onclick="go({t:'play',i:${i}})">${cardH(c)}</button>`).join('')}${bb(me)}</div></section>
+ </main>`}
+function go(a){if(!S||S.over!=null)return;if(mode=='guest')room.emit('ac',{a}).catch(()=>{});else H(V,a)}
+function ac(x){if(x=='M')return leave();if(x=='RV')return startGame();go(AM[x])}
+function leave(){if(room)try{room.leave()}catch(e){}room=null;gp=null;S=null;mode='';info='';clearInterval(iv);render()}
+function menu(){$('app').innerHTML=`<main class="menu"><span class="menu-mark" aria-hidden="true">♠</span><h1>TRUCO</h1><div class="menu-subtitle">El clásico argentino · a 30 puntos</div>
+ <button class="b" type="button" onclick="mode='cpu';V=0;startGame()">Jugar contra la compu</button>
+ <button class="b quiet" type="button" onclick="mk()">Crear partida online</button>
+ <div class="join"><input id="cd" maxlength="4" placeholder="CÓDIGO DE SALA" aria-label="Código de sala" autocomplete="off"><button class="b" type="button" onclick="jn()">Unirme</button></div>
+ <div class="info">${info}</div>
+ <details><summary>Reglas rápidas</summary><p>Baraja española de 40 cartas. Se gana la mano al mejor de 3 bazas (parda: gana la primera o el mano). Orden: 1♠ espada, 1 basto, 7 espada, 7 oro, 3, 2, 1 copa y oro, 12, 11, 10, 7 copa y basto, 6, 5, 4.</p><p>Truco 2 · Retruco 3 · Vale cuatro 4 (solo escala quien dijo quiero). Envido 2 · Real Envido 3 · Falta Envido (lo que falta para 30) · solo en la primera baza y se puede cantar sobre un truco. Sin quiero: 1 punto (o lo acumulado). Sin flor.</p><p>Cartas adaptadas de <a href="https://commons.wikimedia.org/wiki/File:Spanish_National_pattern.png" target="_blank" rel="noopener">Spanish National pattern</a>, de Countakeshi, Wikimedia Commons; recortadas y convertidas a WebP bajo licencia <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>.</p></details></main>`}
+async function online(host,code){
+ const r0=await claude.use('room');
+ if(!r0){info='Online no disponible: abrí este link desde claude.ai con tu sesión iniciada.';return menu()}
+ try{room=await r0.join('truco-'+code)}catch(e){info='No se pudo entrar a la sala.';return menu()}
+ V=host?0:1;mode=host?'host':'guest';
+ if(host){
+  room.on('hi',m=>{if(m.isMe)return;if(!gp)gp=m.peer;if(m.peer!=gp)return;S?push():startGame()});
+  room.on('ac',m=>{if(!m.isMe&&m.peer==gp&&S&&m.data&&m.data.a)H(1,m.data.a)})}
+ else{
+  room.on('st',m=>{if(m.isMe)return;S=m.data;render()});
+  const hi=()=>{if(!S)room.emit('hi',{}).catch(()=>{})};hi();iv=setInterval(hi,1500)}}
+function mk(){const A='abcdefghjkmnpqrstuvwxyz';let c='';for(let i=0;i<4;i++)c+=A[Math.random()*A.length|0];
+ info=`Sala <b>${c.toUpperCase()}</b>: pasale el código a tu rival (que abra este mismo link) y esperá a que se una.`;menu();online(true,c)}
+function jn(){const c=$('cd').value.trim().toLowerCase();if(!/^[a-z]{4}$/.test(c)){info='Ingresá un código de 4 letras.';return menu()}
+ info='Conectando a la sala…';menu();online(false,c)}
+render();
+</script></body></html>
